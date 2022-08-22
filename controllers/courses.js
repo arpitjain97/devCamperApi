@@ -5,7 +5,10 @@ const ErrorResponse = require('../utils/errorResponse');
 exports.getCourses = asyncHandler(async(req,res,next) =>{
     let query;
     if(req.params.bootcampId){
-        query = Course.find({bootcamp:req.params.bootcampId});
+        query = Course.find({bootcamp:req.params.bootcampId}).populate({
+            path:'bootcamp',
+            select: 'name description'
+        });
     }
     else{
         query = Course.find();
