@@ -2,7 +2,14 @@ const path = require('path');
 const express = require('express');
 const dotenv = require('dotenv');
 const morgan = require('morgan');
+const helmet = require('helmet');
 const colors = require('colors');
+const xss = require('xss-clean');
+const cors = require('cors');
+const hpp = require('hpp');
+const rateLimit = require('express-rate-limit');
+const mongoSanitize = require('express-mongo-sanitize');
+const cookieParser = require('cookie-parser');
 const fileupload = require('express-fileupload');
 const connectDB = require('./config/db');
 const errorHandler = require('./middleware/error');
@@ -15,12 +22,25 @@ const reviews = require('./routes/reviews');
 connectDB();
 const app = express(); 
 app.use(express.json());
+app.use(cookieParser());
+
+
 // const logger = (req,res,next) =>{
 //     console.log(`${req.method} ${req.protocol}://${req.get('host')}${req.originalUrl}`);
 //     next();
 // }
 app.use(morgan('dev'));
 app.use(fileupload());
+app.use(mongoSanitize());
+app.use(helmet());
+app.use(xss());
+app.use(hpp());
+const limiter = rateLimit({
+    windowMS: 10*60*1000,
+    max: 100
+});
+app.use(limiter);
+app.use(cors()); 
 app.use(express.static(path.join(__dirname,'public')));
 app.use('/api/v1/bootcamps',bootcamps);
 app.use('/api/v1/courses',courses);
