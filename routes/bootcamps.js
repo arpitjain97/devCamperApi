@@ -7,8 +7,9 @@ const { getBootcamp,
         getBootcampsInRadius,
         bootcampPhotoUpload
     } = require('../controllers/bootcamps');
-const {protect,authorize} = require('../middleware/auth');
+
 const Bootcamp = require('../models/Bootcamp');
+const {protect,authorize} = require('../middleware/auth');
 const advancedResults = require('../middleware/advanceResults');
 
 const router = express.Router();
